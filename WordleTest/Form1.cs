@@ -12,7 +12,7 @@ namespace WordleTest
 {
     public partial class Form1 : Form
     {
-        public TextBox[,] letters = new TextBox[6,6];
+        public TextBox[,] letters = new TextBox[5,5];
         public string wordToGuess;
         public Form1()
         {   
@@ -23,7 +23,7 @@ namespace WordleTest
         public void button1_Click(object sender, EventArgs e)
         {
             
-            for (int i=0; i<6; i++)
+            for (int i=0; i<5; i++)
             {
                 //colour change rows to red, green, yellow
                 letters[i, 0].BackColor = Color.Red;
@@ -35,9 +35,9 @@ namespace WordleTest
         }
         public void textGrid()
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 5; i++)
             {
-                for (int j = 0; j < 6; j++)
+                for (int j = 0; j < 5; j++)
                 {
                     letters[i, j] = new TextBox();
                     //letters[i,j] = new System.Windows.Forms.TextBox();
@@ -58,9 +58,9 @@ namespace WordleTest
         {
             generateWord randWord = new generateWord();
             wordToGuess = randWord.wordToGuess();
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 5; i++)
             {
-                letters[i, 5].Text = wordToGuess[i].ToString();
+                letters[i, 4].Text = wordToGuess[i].ToString().ToUpper();
             }
         }
     }

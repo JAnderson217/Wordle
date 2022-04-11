@@ -10,12 +10,12 @@ namespace WordleTest
     {
         List<string> getList()
         {
-            List<string> allLinesText = System.IO.File.ReadAllLines("dictionary.txt").ToList();
-            foreach (string line in allLinesText.ToList())
+            List<string> allLinesText = new List<string>();
+            foreach (string line in System.IO.File.ReadLines(@"dictionary.txt"))
             {
-                if (line.Length != 6)
+                if (line.Length == 5)
                 {
-                    allLinesText.Remove(line);
+                    allLinesText.Add(line);
                 }
             }
             return allLinesText;
