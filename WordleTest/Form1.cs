@@ -22,16 +22,11 @@ namespace WordleTest
 
         public void button1_Click(object sender, EventArgs e)
         {
-            
-            for (int i=0; i<5; i++)
-            {
-                //colour change rows to red, green, yellow
-                letters[i, 0].BackColor = Color.Red;
-                letters[i, 1].BackColor = Color.Green;
-                letters[i, 2].BackColor = Color.LightGoldenrodYellow; 
-                //lock row after guess
-                letters[i,0].ReadOnly = true;
-            }   
+
+            //updateColours, first row one yellow, second 1 green 2 yellow, third all green
+            updateColours(0, new int[] {0,2,0,0,0});
+            updateColours(1, new int[] { 1,0,2,2,0 });
+            updateColours(2, new int[] { 1,1,1,1,1 });  
         }
         public void textGrid()
         {
@@ -51,6 +46,25 @@ namespace WordleTest
                     letters[i, j].TabIndex = 0;
                     this.Controls.Add(letters[i, j]);
                 }
+            }
+        }
+
+        public void updateColours(int guess, int[] colours)
+        {
+            //updates colours, gives current guess and array of which colour to fill
+            //loop through colours, change color, 0 leave, 1 green, 2 yellow
+            for (int i = 0; i < 5; i++)
+            {
+                if (colours[i] == 1)
+                {
+                    letters[i,guess].BackColor = Color.Green;
+                }
+                else if (colours[i] == 2)
+                {
+                    letters[i,guess].BackColor = Color.LightGoldenrodYellow;
+                }
+                //lock row after guess
+                letters[i, guess].ReadOnly = true;
             }
         }
 
