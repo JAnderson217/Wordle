@@ -16,6 +16,7 @@ namespace WordleTest
         public string wordToGuess;
         public int guesses = 0;
         public checkGuess check = new checkGuess();
+        public bool backspace = false;
         public Form1()
         {   
             InitializeComponent();
@@ -48,6 +49,8 @@ namespace WordleTest
                     letters[i][j].MaxLength = 1;
                     letters[i][j].Size = new System.Drawing.Size(28, 28);
                     letters[i][j].TabIndex = 0;
+                    this.letters[i][j].TextChanged += new System.EventHandler(this.textChange);
+                    this.letters[i][j].KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.keyPressed);
                     this.Controls.Add(letters[i][j]);
                 }
             }
@@ -117,7 +120,43 @@ namespace WordleTest
             { 
                 letters[i][guesses].ReadOnly = false;
             }
+            //focus on new row
+            letters[0][guesses].Focus();
         }
 
+        private void textChange(object sender, EventArgs e)
+        {
+            //move to next text box after char entered
+            Console.WriteLine("Running");
+            for (int i=0; i<4; i++)
+            {
+                if (letters[i][guesses].Text.Length == 1 && !backspace)
+                {
+                    letters[i + 1][guesses].Focus();
+                }
+            }
+        }
+        private void keyPressed(object sender, KeyPressEventArgs e)
+        {
+            //guesses word when enter key pressed, moves back textbox with backspace
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                button1_Click(this, new EventArgs());
+            }
+            else if (e.KeyChar == (char)Keys.Back)
+            {
+                backspace = true;
+                for (int i = 4; i >= 1; i--)
+                {
+                    Console.WriteLine($"letters[i][guesses] is {letters[i][guesses]}");
+                    if (letters[i][guesses].Text.Length == 0)
+                    {
+                        Console.WriteLine($"i is {i}");
+                        letters[i - 1][guesses].Focus();
+                        backspace = false;
+                    }
+                }
+            }
+        }
     }
 }
