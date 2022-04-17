@@ -14,70 +14,110 @@ namespace WordleTest
     {
         public TextBox[][] letters = new TextBox[5][];
         public string wordToGuess;
+        public int guesses = 0;
+        public checkGuess check = new checkGuess();
         public Form1()
         {   
             InitializeComponent();
             textGrid();
+            generateWord randWord = new generateWord();
+            wordToGuess = randWord.wordToGuess();
+            Console.WriteLine(wordToGuess);
+            openRow();
         }
 
         public void button1_Click(object sender, EventArgs e)
         {
-
-            //updateColours, first row one yellow, second 1 green 2 yellow, third and last all green
-            updateColours(0, new int[] {0,2,0,0,0});
-            updateColours(1, new int[] { 1,0,2,2,0 });
-            updateColours(2, new int[] { 1,1,1,1,1 });
-            updateColours(5, new int[] { 1, 1, 1, 1, 1 });
+            //call method to update row, change colours depending on which letters correct
+            updateColours(check.updateGrid(guesses, letters, wordToGuess));
         }
         public void textGrid()
         {
+            //generates 5x6 textbox grid
             for (int i = 0; i < 5; i++)
             {
                 letters[i] = new TextBox[6];
                 for (int j = 0; j < 6; j++)
                 {
                     letters[i][j] = new TextBox();
-                    //letters[i,j] = new System.Windows.Forms.TextBox();
+                    //keep all read only, unlock row depending on which guess
+                    letters[i][j].ReadOnly = true;
+                    letters[i][j].CharacterCasing = CharacterCasing.Upper;
                     letters[i][j].SuspendLayout();
-                    // 
-                    // textBox1
-                    // 
-                    letters[i][j].Location = new System.Drawing.Point(60 + (i * 26), 49 + (j * 26));
+                    letters[i][j].Location = new System.Drawing.Point(70 + (i * 29), 59 + (j * 29));
                     letters[i][j].MaxLength = 1;
-                    letters[i][j].Size = new System.Drawing.Size(25, 22);
+                    letters[i][j].Size = new System.Drawing.Size(28, 28);
                     letters[i][j].TabIndex = 0;
                     this.Controls.Add(letters[i][j]);
                 }
             }
         }
 
-        public void updateColours(int guess, int[] colours)
+        public void updateColours(int[] colours)
         {
-            //updates colours, gives current guess and array of which colour to fill
+            //updates colours of row, green for correct, yellow for within word but wrong position
             //loop through colours, change color, 0 leave, 1 green, 2 yellow
-            for (int i = 0; i < 5; i++)
+            //method within update colours returns -1 if invalid guess
+            if (colours[0] == -1)
             {
-                if (colours[i] == 1)
+                MessageBox.Show("Invalid guess, must guess a valid 5 letter word");
+            }
+            else
+            {
+                for (int i = 0; i < 5; i++)
+                    //loop through colours and change colour of grid
                 {
-                    letters[i][guess].BackColor = Color.Green;
+                    if (colours[i] == 1)
+                    {
+                        letters[i][guesses].BackColor = Color.Green;
+                    }
+                    else if (colours[i] == 2)
+                    {
+                        letters[i][guesses].BackColor = Color.LightGoldenrodYellow;
+                    }
+                    //lock row after guess
+                    letters[i][guesses].ReadOnly = true;
                 }
-                else if (colours[i] == 2)
+                //valid guess so add to guess and check status of game
+                guesses++;
+                //check game status, if won/lost then end, otherwise continue with next row
+                gameStatus(colours);
+                openRow();
+            }
+            
+        }
+
+        public void gameStatus(int[] col)
+        {
+            bool hasWon = true;
+            //check if each char matches
+            for (int i=0; i<col.Length; i++)
+            {
+                if (col[i]!=1)
                 {
-                    letters[i][guess].BackColor = Color.LightGoldenrodYellow;
+                    hasWon = false;
                 }
-                //lock row after guess
-                letters[i][guess].ReadOnly = true;
+            }
+            if (hasWon)
+            {
+                MessageBox.Show($"Congratulations! You guessed {wordToGuess.ToUpper()} in {guesses} tries");
+                Environment.Exit(0);
+            }
+            else if (!hasWon && guesses == 6)
+            {
+                MessageBox.Show($"Unlucky! The word was {wordToGuess.ToUpper()}");
+                Environment.Exit(0);
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        public void openRow()
         {
-            generateWord randWord = new generateWord();
-            wordToGuess = randWord.wordToGuess();
-            for (int i = 0; i < 5; i++)
-            {
-                letters[i][5].Text = wordToGuess[i].ToString().ToUpper();
+            //opens row for guessing
+            for (int i=0; i<5; i++)
+            { 
+                letters[i][guesses].ReadOnly = false;
             }
         }
+
     }
 }
