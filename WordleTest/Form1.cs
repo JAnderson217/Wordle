@@ -17,6 +17,7 @@ namespace WordleTest
         public int guesses = 0;
         public checkGuess check = new checkGuess();
         public bool backspace = false;
+        public bool hasWon = false;
         public Form1()
         {   
             InitializeComponent();
@@ -92,7 +93,7 @@ namespace WordleTest
 
         public void gameStatus(int[] col)
         {
-            bool hasWon = true;
+            hasWon = true;
             //check if each char matches
             for (int i=0; i<col.Length; i++)
             {
@@ -104,24 +105,32 @@ namespace WordleTest
             if (hasWon)
             {
                 MessageBox.Show($"Congratulations! You guessed {wordToGuess.ToUpper()} in {guesses} tries");
-                Environment.Exit(0);
+                this.Hide();
             }
             else if (!hasWon && guesses == 6)
             {
                 MessageBox.Show($"Unlucky! The word was {wordToGuess.ToUpper()}");
-                Environment.Exit(0);
+                this.Hide(); 
             }
         }
 
         public void openRow()
         {
-            //opens row for guessing
-            for (int i=0; i<5; i++)
-            { 
-                letters[i][guesses].ReadOnly = false;
+            //Makes next row unreadable, if game is still active, if all guesses used end game
+            if (guesses != 6 && hasWon == false)
+            {
+                //opens row for guessing
+                for (int i = 0; i < 5; i++)
+                {
+                    letters[i][guesses].ReadOnly = false;
+                }
+                //focus on new row
+                letters[0][guesses].Focus();
             }
-            //focus on new row
-            letters[0][guesses].Focus();
+            else
+            {
+                Environment.Exit(0);
+            }
         }
 
         private void textChange(object sender, EventArgs e)
